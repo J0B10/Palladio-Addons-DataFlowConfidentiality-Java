@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature id="edu.kit.kastel.dsis.fluidtrust.casestudy.pcs.javaanalysis">
+      <category name="edu.kit.kastel.dsis.fluidtrust.casestudy.pcs.javaanalysis.category"/>
+   </feature>
+   <feature id="edu.kit.kastel.dsis.fluidtrust.casestudy.pcs.javaanalysis.source">
+      <category name="edu.kit.kastel.dsis.fluidtrust.casestudy.pcs.javaanalysis.source.category"/>
+   </feature>
+   <category-def name="edu.kit.kastel.dsis.fluidtrust.casestudy.pcs.javaanalysis.category" label="Confidentiality Dataflow Java">
+   </category-def>
+   <category-def name="edu.kit.kastel.dsis.fluidtrust.casestudy.pcs.javaanalysis.source.category" label="Confidentiality Dataflow Java Developer Resources">
+   </category-def>
+</site>
+

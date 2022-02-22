@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="edu.kit.kastel.dsis.fluidtrust.casestudy.pcs.javaanalysis"
+      label="Confidentiality Dataflow Analysis Java"
+      version="0.1.0.qualifier"
+      plugin="org.palladiosimulator.branding"
+      license-feature="org.palladiosimulator.license.epl2"
+      license-feature-version="1.0.0">
+
+
+   <requires>
+      <!--<import plugin="com.google.gson"/>-->
+   </requires>
+
+   <plugin
+         id="edu.kit.kastel.dsis.fluidtrust.casestudy.pcs.analysis"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.kit.kastel.dsis.fluidtrust.casestudy.pcs.application"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
