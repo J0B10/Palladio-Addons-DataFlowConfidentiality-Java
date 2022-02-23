@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Analysis
+Bundle-SymbolicName: edu.kit.kastel.dsis.fluidtrust.datacharacteristic.analysis
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.kit.kastel.dsis.fluidtrust.datacharacteristic.analysis.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ org.palladiosimulator.dataflow.confidentiality.transformation.workflow,
+ de.uka.ipd.sdq.workflow,
+ de.uka.ipd.sdq.workflow.mdsd.blackboard,
+ org.palladiosimulator.pcm,
+ org.palladiosimulator.dataflow.confidentiality.pcm.model,
+ edu.kit.kastel.dsis.fluidtrust.casestudy.pcs.analysis
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Automatic-Module-Name: edu.kit.kastel.dsis.fluidtrust.datacharacteristic.analysis
+Bundle-ActivationPolicy: lazy
+Export-Package: edu.kit.kastel.dsis.fluidtrust.datacharacteristic.analysis.jobs
