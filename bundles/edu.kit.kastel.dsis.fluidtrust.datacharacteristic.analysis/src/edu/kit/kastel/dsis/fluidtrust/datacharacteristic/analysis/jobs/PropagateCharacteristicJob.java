@@ -2,6 +2,7 @@ package edu.kit.kastel.dsis.fluidtrust.datacharacteristic.analysis.jobs;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -50,11 +51,21 @@ public class PropagateCharacteristicJob extends AbstractBlackboardInteractingJob
                 .filter(PCMDataDictionary.class::isInstance).map(PCMDataDictionary.class::cast)
                 .collect(Collectors.toList());
 
+        var dataOutputList = new ArrayList<DataDTO>();
+
+        getCharacteristics(usageModel, allocationModel, dataDictionaries, dataOutputList);
+
+        getBlackboard().put(this.modelOutputURL, dataOutputList);
+
+    }
+
+    private void getCharacteristics(UsageModel usageModel, Allocation allocationModel,
+            List<PCMDataDictionary> dataDictionaries, ArrayList<DataDTO> dataOutputList) {
         var queryEngine = createQueryEngine(usageModel, allocationModel);
 
         var allCharacteristics = findAllCharacteristics(queryEngine, dataDictionaries);
 
-        var dataOutputList = new ArrayList<DataDTO>();
+
 
         for (var set : allCharacteristics.getResults().entrySet()) {
             for (var queryResult : set.getValue()) {
@@ -62,31 +73,27 @@ public class PropagateCharacteristicJob extends AbstractBlackboardInteractingJob
                     var action = (SetVariableAction) queryResult.getElement().getElement();
                     var assemblyContext = queryResult.getElement().getContext().get(0);
 
-                    if (queryResult.getDataCharacteristics().containsKey("RETURN")) {
+                    for (var result : queryResult.getDataCharacteristics().entrySet()) {
+                        var criticality = result.getValue().stream()
+                                .filter(e -> e.getCharacteristicType().getName().equals("DataCriticality")).findAny();
+                        var criticalityLevel = criticality.isPresent()
+                                ? criticality.get().getCharacteristicLiteral().getName()
+                                : "notSet";
 
-                    } else {
-                        for (var result : queryResult.getDataCharacteristics().entrySet()) {
-                            var criticality = result.getValue().stream()
-                                    .filter(e -> e.getCharacteristicType().getName().equals("CriticalityLevel"))
-                                    .findAny();
-                            var criticalityLevel = criticality.isPresent()
-                                    ? criticality.get().getCharacteristicLiteral().getName()
-                                    : "notSet";
-                            var dto = new DataDTO(assemblyContext.getEntityName(), assemblyContext.getId(),
+                        var dto = new DataDTO(assemblyContext.getEntityName(), assemblyContext.getId(),
                                     ((ResourceDemandingSEFF) action.eContainer()).getDescribedService__SEFF()
                                             .getEntityName(),
                                     result.getKey(), criticalityLevel);
-                            dataOutputList.add(dto);
-                        }
+
+
+                        dataOutputList.add(dto);
                     }
+
                 }
 
             }
 
         }
-
-        getBlackboard().put(this.modelOutputURL, dataOutputList);
-
     }
 
     @Override
