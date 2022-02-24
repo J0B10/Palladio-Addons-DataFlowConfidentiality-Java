@@ -35,56 +35,53 @@ public class PropagateCharacteristicJob extends AbstractBlackboardInteractingJob
     private final ModelLocation allocationModelLocation;
     private final String modelOutputURL;
 
-    public PropagateCharacteristicJob(ModelLocation usageModelLocation, ModelLocation allocationModelLocation,
-            String modelOutputURL) {
+    public PropagateCharacteristicJob(final ModelLocation usageModelLocation,
+            final ModelLocation allocationModelLocation, final String modelOutputURL) {
         this.usageModelLocation = usageModelLocation;
         this.allocationModelLocation = allocationModelLocation;
         this.modelOutputURL = modelOutputURL;
     }
 
     @Override
-    public void execute(IProgressMonitor monitor) throws JobFailedException, UserCanceledException {
-        var usageModel = (UsageModel) getBlackboard().getContents(this.usageModelLocation).get(0);
-        var allocationModel = (Allocation) getBlackboard().getContents(this.allocationModelLocation).get(0);
-        var modelPartition = getBlackboard().getPartition(this.usageModelLocation.getPartitionID());
-        var dataDictionaries = modelPartition.getElement(DictionaryPackage.eINSTANCE.getPCMDataDictionary()).stream()
-                .filter(PCMDataDictionary.class::isInstance).map(PCMDataDictionary.class::cast)
+    public void execute(final IProgressMonitor monitor) throws JobFailedException, UserCanceledException {
+        final var usageModel = (UsageModel) this.getBlackboard().getContents(this.usageModelLocation).get(0);
+        final var allocationModel = (Allocation) this.getBlackboard().getContents(this.allocationModelLocation).get(0);
+        final var modelPartition = this.getBlackboard().getPartition(this.usageModelLocation.getPartitionID());
+        final var dataDictionaries = modelPartition.getElement(DictionaryPackage.eINSTANCE.getPCMDataDictionary())
+                .stream().filter(PCMDataDictionary.class::isInstance).map(PCMDataDictionary.class::cast)
                 .collect(Collectors.toList());
 
-        var dataOutputList = new ArrayList<DataDTO>();
+        final var dataOutputList = new ArrayList<DataDTO>();
 
-        getCharacteristics(usageModel, allocationModel, dataDictionaries, dataOutputList);
+        this.getCharacteristics(usageModel, allocationModel, dataDictionaries, dataOutputList);
 
-        getBlackboard().put(this.modelOutputURL, dataOutputList);
+        this.getBlackboard().put(this.modelOutputURL, dataOutputList);
 
     }
 
-    private void getCharacteristics(UsageModel usageModel, Allocation allocationModel,
-            List<PCMDataDictionary> dataDictionaries, ArrayList<DataDTO> dataOutputList) {
-        var queryEngine = createQueryEngine(usageModel, allocationModel);
+    private void getCharacteristics(final UsageModel usageModel, final Allocation allocationModel,
+            final List<PCMDataDictionary> dataDictionaries, final ArrayList<DataDTO> dataOutputList) {
+        final var queryEngine = this.createQueryEngine(usageModel, allocationModel);
 
-        var allCharacteristics = findAllCharacteristics(queryEngine, dataDictionaries);
+        final var allCharacteristics = this.findAllCharacteristics(queryEngine, dataDictionaries);
 
-
-
-        for (var set : allCharacteristics.getResults().entrySet()) {
-            for (var queryResult : set.getValue()) {
+        for (final var set : allCharacteristics.getResults().entrySet()) {
+            for (final var queryResult : set.getValue()) {
                 if (queryResult.getElement().getElement() instanceof SetVariableAction) {
-                    var action = (SetVariableAction) queryResult.getElement().getElement();
-                    var assemblyContext = queryResult.getElement().getContext().get(0);
+                    final var action = (SetVariableAction) queryResult.getElement().getElement();
+                    final var assemblyContext = queryResult.getElement().getContext().get(0);
 
-                    for (var result : queryResult.getDataCharacteristics().entrySet()) {
-                        var criticality = result.getValue().stream()
+                    for (final var result : queryResult.getDataCharacteristics().entrySet()) {
+                        final var criticality = result.getValue().stream()
                                 .filter(e -> e.getCharacteristicType().getName().equals("DataCriticality")).findAny();
-                        var criticalityLevel = criticality.isPresent()
+                        final var criticalityLevel = criticality.isPresent()
                                 ? criticality.get().getCharacteristicLiteral().getName()
                                 : "notSet";
 
-                        var dto = new DataDTO(assemblyContext.getEntityName(), assemblyContext.getId(),
-                                    ((ResourceDemandingSEFF) action.eContainer()).getDescribedService__SEFF()
-                                            .getEntityName(),
-                                    result.getKey(), criticalityLevel);
-
+                        final var dto = new DataDTO(assemblyContext.getEntityName(), assemblyContext.getId(),
+                                ((ResourceDemandingSEFF) action.eContainer()).getDescribedService__SEFF()
+                                        .getEntityName(),
+                                result.getKey(), criticalityLevel);
 
                         dataOutputList.add(dto);
                     }
@@ -97,7 +94,7 @@ public class PropagateCharacteristicJob extends AbstractBlackboardInteractingJob
     }
 
     @Override
-    public void cleanup(IProgressMonitor monitor) throws CleanupFailedException {
+    public void cleanup(final IProgressMonitor monitor) throws CleanupFailedException {
         // TODO Auto-generated method stub
 
     }
@@ -107,26 +104,27 @@ public class PropagateCharacteristicJob extends AbstractBlackboardInteractingJob
         return "Propagate Data";
     }
 
-    private CharacteristicsQueryEngine createQueryEngine(UsageModel usageModel, Allocation allocationModel) {
-        var actionSequenceFinder = new ActionSequenceFinderImpl();
-        var actionSequences = actionSequenceFinder.findActionSequencesForUsageModel(usageModel);
-        var characteristicsCalculator = new CharacteristicsCalculator(allocationModel);
-        var queryEngine = new CharacteristicsQueryEngine(characteristicsCalculator, actionSequences);
+    private CharacteristicsQueryEngine createQueryEngine(final UsageModel usageModel,
+            final Allocation allocationModel) {
+        final var actionSequenceFinder = new ActionSequenceFinderImpl();
+        final var actionSequences = actionSequenceFinder.findActionSequencesForUsageModel(usageModel);
+        final var characteristicsCalculator = new CharacteristicsCalculator(allocationModel);
+        final var queryEngine = new CharacteristicsQueryEngine(characteristicsCalculator, actionSequences);
         return queryEngine;
     }
 
-    private ActionBasedQueryResult findAllCharacteristics(CharacteristicsQueryEngine queryEngine,
-            Collection<PCMDataDictionary> dataDictionaries) {
-        var allCharacteristicValues = getAllEnumCharacteristicTypes(dataDictionaries).stream()
+    private ActionBasedQueryResult findAllCharacteristics(final CharacteristicsQueryEngine queryEngine,
+            final Collection<PCMDataDictionary> dataDictionaries) {
+        final var allCharacteristicValues = this.getAllEnumCharacteristicTypes(dataDictionaries).stream()
                 .flatMap(c -> c.getType().getLiterals().stream().map(l -> new CharacteristicValue(c, l)))
                 .collect(Collectors.toList());
 
-        var query = new ActionBasedQueryImpl(Objects::nonNull, allCharacteristicValues, allCharacteristicValues);
+        final var query = new ActionBasedQueryImpl(Objects::nonNull, allCharacteristicValues, allCharacteristicValues);
         return queryEngine.query(query);
     }
 
     private Collection<EnumCharacteristicType> getAllEnumCharacteristicTypes(
-            Collection<PCMDataDictionary> dataDictionaries) {
+            final Collection<PCMDataDictionary> dataDictionaries) {
         return dataDictionaries.stream().map(PCMDataDictionary::getCharacteristicTypes).flatMap(Collection::stream)
                 .filter(EnumCharacteristicType.class::isInstance).map(EnumCharacteristicType.class::cast)
                 .collect(Collectors.toList());
