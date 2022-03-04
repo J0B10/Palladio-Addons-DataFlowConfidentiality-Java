@@ -27,8 +27,9 @@ public class ConfidentialityAnalysisTest extends TestBase {
 	public void test() throws JobFailedException, UserCanceledException {
 		System.out.println("Hello World!");
 		
-		final var folderURI = TestInitializer.getModelURI("models/InternationalOnlineShop");
-		final var workflow = new DataflowAnalysisWorkflow(folderURI);
+		final var allocationURI = TestInitializer.getModelURI("models/InternationalOnlineShop/default.allocation");
+		final var usageURI = TestInitializer.getModelURI("models/InternationalOnlineShop/default.usagemodel");
+		final var workflow = new DataflowAnalysisWorkflow(allocationURI, usageURI);
 		workflow.execute(new NullProgressMonitor());
 	}
 

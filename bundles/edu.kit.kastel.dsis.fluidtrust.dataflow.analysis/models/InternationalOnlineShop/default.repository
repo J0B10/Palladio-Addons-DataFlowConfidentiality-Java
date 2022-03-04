@@ -80,8 +80,20 @@
       </steps_Behaviour>
     </serviceEffectSpecifications__BasicComponent>
     <serviceEffectSpecifications__BasicComponent xsi:type="seff:ResourceDemandingSEFF" id="_oGmXgITjEeywmO_IpTxeAg" describedService__SEFF="_lb5hQITiEeywmO_IpTxeAg">
-      <steps_Behaviour xsi:type="seff:StartAction" id="_oGmXgYTjEeywmO_IpTxeAg" successor_AbstractAction="_oGmXgoTjEeywmO_IpTxeAg"/>
-      <steps_Behaviour xsi:type="seff:StopAction" id="_oGmXgoTjEeywmO_IpTxeAg" predecessor_AbstractAction="_oGmXgYTjEeywmO_IpTxeAg"/>
+      <steps_Behaviour xsi:type="seff:StartAction" id="_oGmXgYTjEeywmO_IpTxeAg" successor_AbstractAction="_44uUMJvJEeyL_91CQvcsoA"/>
+      <steps_Behaviour xsi:type="seff:StopAction" id="_oGmXgoTjEeywmO_IpTxeAg" predecessor_AbstractAction="_44uUMJvJEeyL_91CQvcsoA"/>
+      <steps_Behaviour xsi:type="seff:SetVariableAction" id="_44uUMJvJEeyL_91CQvcsoA" entityName="StoreUserData" predecessor_AbstractAction="_oGmXgYTjEeywmO_IpTxeAg" successor_AbstractAction="_oGmXgoTjEeywmO_IpTxeAg">
+        <localVariableUsages_SetVariableAction>
+          <variableCharacterisation_VariableUsage xsi:type="confidentiality:ConfidentialityVariableCharacterisation">
+            <specification_VariableCharacterisation specification="false"/>
+            <lhs xsi:type="expression:LhsEnumCharacteristicReference" id="_FoZr0pvKEeyL_91CQvcsoA"/>
+            <rhs xsi:type="expression:NamedEnumCharacteristicReference" id="_FoZr05vKEeyL_91CQvcsoA">
+              <namedReference xsi:type="stoex:VariableReference" referenceName="userData"/>
+            </rhs>
+          </variableCharacterisation_VariableUsage>
+          <namedReference__VariableUsage xsi:type="stoex:VariableReference" referenceName="userData"/>
+        </localVariableUsages_SetVariableAction>
+      </steps_Behaviour>
     </serviceEffectSpecifications__BasicComponent>
     <serviceEffectSpecifications__BasicComponent xsi:type="seff:ResourceDemandingSEFF" id="_oGykwITjEeywmO_IpTxeAg" describedService__SEFF="_ENtBkITjEeywmO_IpTxeAg">
       <steps_Behaviour xsi:type="seff:StartAction" id="_oGzL0ITjEeywmO_IpTxeAg" successor_AbstractAction="_oGzL0YTjEeywmO_IpTxeAg"/>
