@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import de.uka.ipd.sdq.workflow.jobs.JobFailedException;
@@ -29,6 +30,26 @@ public class ConfidentialityAnalysisTest extends TestBase {
 		
 		final var allocationURI = TestInitializer.getModelURI("models/InternationalOnlineShop/default.allocation");
 		final var usageURI = TestInitializer.getModelURI("models/InternationalOnlineShop/default.usagemodel");
+		final var workflow = new DataflowAnalysisWorkflow(allocationURI, usageURI);
+		workflow.execute(new NullProgressMonitor());
+	}
+
+	
+	@Test
+	public void testShop2() throws JobFailedException, UserCanceledException {
+		System.out.println("Hello World!");
+		final var allocationURI = TestInitializer.getModelURI("models/InternationalOnlineShop_paladio/default.allocation");
+		final var usageURI = TestInitializer.getModelURI("models/InternationalOnlineShop_paladio/default.usagemodel");
+		final var workflow = new DataflowAnalysisWorkflow(allocationURI, usageURI);
+		workflow.execute(new NullProgressMonitor());
+	}
+
+	
+	@Test
+	public void testTravelPlanner() throws JobFailedException, UserCanceledException {
+		System.out.println("Hello TravelPlanner!");
+		final var allocationURI = TestInitializer.getModelURI("models/TravelPlanner/travelPlanner.allocation");
+		final var usageURI = TestInitializer.getModelURI("models/TravelPlanner/travelPlanner.usagemodel");
 		final var workflow = new DataflowAnalysisWorkflow(allocationURI, usageURI);
 		workflow.execute(new NullProgressMonitor());
 	}
