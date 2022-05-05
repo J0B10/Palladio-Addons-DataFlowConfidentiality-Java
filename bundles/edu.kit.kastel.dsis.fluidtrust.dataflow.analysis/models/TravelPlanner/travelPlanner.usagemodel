@@ -3,9 +3,9 @@
   <usagemodel:UsageModel>
     <usageScenario_UsageModel id="_V_RAcPVhEeuMKba1Qn68bg" entityName="User">
       <scenarioBehaviour_UsageScenario id="_Yc9x8PVhEeuMKba1Qn68bg" entityName="ScenarioBehaviour">
-        <actions_ScenarioBehaviour xsi:type="usagemodel:Start" id="_Yc9x8fVhEeuMKba1Qn68bg" successor="_gdSegPVhEeuMKba1Qn68bg"/>
+        <actions_ScenarioBehaviour xsi:type="usagemodel:Start" id="_Yc9x8fVhEeuMKba1Qn68bg" successor="_Ic2H0PViEeuMKba1Qn68bg"/>
         <actions_ScenarioBehaviour xsi:type="usagemodel:Stop" id="_Yc9x8vVhEeuMKba1Qn68bg" predecessor="_vVN8EPVhEeuMKba1Qn68bg"/>
-        <actions_ScenarioBehaviour xsi:type="usagemodel:EntryLevelSystemCall" id="_gdSegPVhEeuMKba1Qn68bg" entityName="store ccd" successor="_kJSPIPVhEeuMKba1Qn68bg" predecessor="_Yc9x8fVhEeuMKba1Qn68bg">
+        <actions_ScenarioBehaviour xsi:type="usagemodel:EntryLevelSystemCall" id="_gdSegPVhEeuMKba1Qn68bg" entityName="store ccd" successor="_kJSPIPVhEeuMKba1Qn68bg" predecessor="_Ic2H0PViEeuMKba1Qn68bg">
           <providedRole_EntryLevelSystemCall href="travelPlanner.system#_eAKxQPVgEeuMKba1Qn68bg"/>
           <operationSignature__EntryLevelSystemCall href="travelPlanner.repository#_rbLsQPVdEeuMKba1Qn68bg"/>
           <inputParameterUsages_EntryLevelSystemCall>
@@ -92,13 +92,8 @@
             <namedReference__VariableUsage xsi:type="stoex:VariableReference" referenceName="ccd"/>
           </inputParameterUsages_EntryLevelSystemCall>
         </actions_ScenarioBehaviour>
-      </scenarioBehaviour_UsageScenario>
-    </usageScenario_UsageModel>
-    <usageScenario_UsageModel id="_EkqVUPViEeuMKba1Qn68bg" entityName="FlightPlanner">
-      <scenarioBehaviour_UsageScenario id="_GmS14PViEeuMKba1Qn68bg" entityName="ScenarioBehaviour">
-        <actions_ScenarioBehaviour xsi:type="usagemodel:Start" id="_GmS14fViEeuMKba1Qn68bg" successor="_Ic2H0PViEeuMKba1Qn68bg"/>
-        <actions_ScenarioBehaviour xsi:type="usagemodel:Stop" id="_GmS14vViEeuMKba1Qn68bg" predecessor="_Ic2H0PViEeuMKba1Qn68bg"/>
-        <actions_ScenarioBehaviour xsi:type="usagemodel:EntryLevelSystemCall" id="_Ic2H0PViEeuMKba1Qn68bg" entityName="add scheduled flight" successor="_GmS14vViEeuMKba1Qn68bg" predecessor="_GmS14fViEeuMKba1Qn68bg">
+
+        <actions_ScenarioBehaviour xsi:type="usagemodel:EntryLevelSystemCall" id="_Ic2H0PViEeuMKba1Qn68bg" entityName="add scheduled flight" successor="_gdSegPVhEeuMKba1Qn68bg" predecessor="_Yc9x8fVhEeuMKba1Qn68bg">
           <providedRole_EntryLevelSystemCall href="travelPlanner.system#_ff0mIPVgEeuMKba1Qn68bg"/>
           <operationSignature__EntryLevelSystemCall href="travelPlanner.repository#_vZ_EIPVdEeuMKba1Qn68bg"/>
           <inputParameterUsages_EntryLevelSystemCall>
@@ -112,6 +107,14 @@
             <namedReference__VariableUsage xsi:type="stoex:VariableReference" referenceName="flight"/>
           </inputParameterUsages_EntryLevelSystemCall>
         </actions_ScenarioBehaviour>
+        
+      </scenarioBehaviour_UsageScenario>
+    </usageScenario_UsageModel>
+    <usageScenario_UsageModel id="_EkqVUPViEeuMKba1Qn68bg" entityName="FlightPlanner">
+      <scenarioBehaviour_UsageScenario id="_GmS14PViEeuMKba1Qn68bg" entityName="ScenarioBehaviour">
+        <actions_ScenarioBehaviour xsi:type="usagemodel:Start" id="_GmS14fViEeuMKba1Qn68bg" successor="_GmS14vViEeuMKba1Qn68bg"/>
+        <actions_ScenarioBehaviour xsi:type="usagemodel:Stop" id="_GmS14vViEeuMKba1Qn68bg" predecessor="_GmS14fViEeuMKba1Qn68bg"/>
+        
       </scenarioBehaviour_UsageScenario>
     </usageScenario_UsageModel>
   </usagemodel:UsageModel>

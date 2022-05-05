@@ -74,8 +74,10 @@ public class RunCustomJavaBasedAnalysisJob extends AbstractBlackboardInteracting
 		System.out.println("\n\nCHARACTERISTIC TYPES --------------------");
 		enumCharacteristicTypes.forEach(entry -> System.out.println(entry.getName()));
 
-		var ctServerLocation = findByName(enumCharacteristicTypes, "ServerLocation");
-		var ctDataSensitivity = findByName(enumCharacteristicTypes, "DataSensitivity");
+		//var ctServerLocation = findByName(enumCharacteristicTypes, "ServerLocation");
+		//var ctDataSensitivity = findByName(enumCharacteristicTypes, "DataSensitivity")
+		var ctGrantedRoles = findByName(enumCharacteristicTypes, "GrantedRoles");
+		var ctAssignedRoles = findByName(enumCharacteristicTypes, "AssignedRoles");
 
 		var violations = new ActionBasedQueryResult();
 
@@ -84,24 +86,25 @@ public class RunCustomJavaBasedAnalysisJob extends AbstractBlackboardInteracting
 		for (var resultEntry : allCharacteristics.getResults().entrySet()) {
 			for (var queryResult : resultEntry.getValue()) {
 
-				var serverLocations = queryResult.getNodeCharacteristics().stream()
-						.filter(cv -> cv.getCharacteristicType() == ctServerLocation)
+				var grantedRoles = queryResult.getDataCharacteristics().values().stream()
+						.flatMap(Collection::stream)
+						.filter(cv -> cv.getCharacteristicType() == ctGrantedRoles)
 						.map(CharacteristicValue::getCharacteristicLiteral).map(it -> it.getName())
 						.collect(Collectors.toList());
 
-				var dataSensitivites = queryResult.getDataCharacteristics().values().stream()
-						.flatMap(Collection::stream).filter(cv -> cv.getCharacteristicType() == ctDataSensitivity)
-						.map(CharacteristicValue::getCharacteristicLiteral).map(it -> it.getName())
+				var assignedRoles = queryResult.getDataCharacteristics().values().stream()
+						.flatMap(Collection::stream).filter(cv -> cv.getCharacteristicType() == ctAssignedRoles)
+						.map(val -> val.getCharacteristicLiteral()).map(it -> it.getName())
 						.collect(Collectors.toList());
 
 				var element = getElementRepresentation(queryResult.getElement());
 
-				System.out.println(element + ", " + serverLocations.toString() + ", " + dataSensitivites.toString());
+				System.out.println(element + ", " + grantedRoles.toString() + ", " + assignedRoles.toString());
 
 				// Actual constraint
-				if (serverLocations.contains("nonEU") && dataSensitivites.contains("Personal")) {
+				/*if (serverLocations.contains("nonEU") && dataSensitivites.contains("Personal")) {
 					violations.addResult(resultEntry.getKey(), queryResult);
-				}
+				}*/
 			}
 		}
 
