@@ -3,7 +3,7 @@ name: Build Pipeline
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  Build-Bench:
+  Build:
    runs-on: ubuntu-latest
    
    steps:
