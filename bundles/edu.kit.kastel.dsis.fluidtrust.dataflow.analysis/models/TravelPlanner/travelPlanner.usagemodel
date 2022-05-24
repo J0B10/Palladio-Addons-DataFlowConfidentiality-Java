@@ -3,9 +3,9 @@
   <usagemodel:UsageModel>
     <usageScenario_UsageModel id="_V_RAcPVhEeuMKba1Qn68bg" entityName="User">
       <scenarioBehaviour_UsageScenario id="_Yc9x8PVhEeuMKba1Qn68bg" entityName="ScenarioBehaviour">
-        <actions_ScenarioBehaviour xsi:type="usagemodel:Start" id="_Yc9x8fVhEeuMKba1Qn68bg" successor="_Ic2H0PViEeuMKba1Qn68bg"/>
+        <actions_ScenarioBehaviour xsi:type="usagemodel:Start" id="_Yc9x8fVhEeuMKba1Qn68bg" successor="_gdSegPVhEeuMKba1Qn68bg"/>
         <actions_ScenarioBehaviour xsi:type="usagemodel:Stop" id="_Yc9x8vVhEeuMKba1Qn68bg" predecessor="_vVN8EPVhEeuMKba1Qn68bg"/>
-        <actions_ScenarioBehaviour xsi:type="usagemodel:EntryLevelSystemCall" id="_gdSegPVhEeuMKba1Qn68bg" entityName="store ccd" successor="_kJSPIPVhEeuMKba1Qn68bg" predecessor="_Ic2H0PViEeuMKba1Qn68bg">
+        <actions_ScenarioBehaviour xsi:type="usagemodel:EntryLevelSystemCall" id="_gdSegPVhEeuMKba1Qn68bg" entityName="store ccd" successor="_Ic2H0PViEeuMKba1Qn68bg" predecessor="_Yc9x8fVhEeuMKba1Qn68bg">
           <providedRole_EntryLevelSystemCall href="travelPlanner.system#_eAKxQPVgEeuMKba1Qn68bg"/>
           <operationSignature__EntryLevelSystemCall href="travelPlanner.repository#_rbLsQPVdEeuMKba1Qn68bg"/>
           <inputParameterUsages_EntryLevelSystemCall>
@@ -20,7 +20,7 @@
             <namedReference__VariableUsage xsi:type="stoex:VariableReference" referenceName="ccd"/>
           </inputParameterUsages_EntryLevelSystemCall>
         </actions_ScenarioBehaviour>
-        <actions_ScenarioBehaviour xsi:type="usagemodel:EntryLevelSystemCall" id="_kJSPIPVhEeuMKba1Qn68bg" entityName="look for flights" successor="_o46nAPVhEeuMKba1Qn68bg" predecessor="_gdSegPVhEeuMKba1Qn68bg">
+        <actions_ScenarioBehaviour xsi:type="usagemodel:EntryLevelSystemCall" id="_kJSPIPVhEeuMKba1Qn68bg" entityName="look for flights" successor="_o46nAPVhEeuMKba1Qn68bg" predecessor="_Ic2H0PViEeuMKba1Qn68bg">
           <providedRole_EntryLevelSystemCall href="travelPlanner.system#_f_HKMPVgEeuMKba1Qn68bg"/>
           <operationSignature__EntryLevelSystemCall href="travelPlanner.repository#_Z7woAPVdEeuMKba1Qn68bg"/>
           <outputParameterUsages_EntryLevelSystemCall>
@@ -92,8 +92,7 @@
             <namedReference__VariableUsage xsi:type="stoex:VariableReference" referenceName="ccd"/>
           </inputParameterUsages_EntryLevelSystemCall>
         </actions_ScenarioBehaviour>
-
-        <actions_ScenarioBehaviour xsi:type="usagemodel:EntryLevelSystemCall" id="_Ic2H0PViEeuMKba1Qn68bg" entityName="add scheduled flight" successor="_gdSegPVhEeuMKba1Qn68bg" predecessor="_Yc9x8fVhEeuMKba1Qn68bg">
+        <actions_ScenarioBehaviour xsi:type="usagemodel:EntryLevelSystemCall" id="_Ic2H0PViEeuMKba1Qn68bg" entityName="add scheduled flight" successor="_kJSPIPVhEeuMKba1Qn68bg" predecessor="_gdSegPVhEeuMKba1Qn68bg">
           <providedRole_EntryLevelSystemCall href="travelPlanner.system#_ff0mIPVgEeuMKba1Qn68bg"/>
           <operationSignature__EntryLevelSystemCall href="travelPlanner.repository#_vZ_EIPVdEeuMKba1Qn68bg"/>
           <inputParameterUsages_EntryLevelSystemCall>
@@ -107,21 +106,12 @@
             <namedReference__VariableUsage xsi:type="stoex:VariableReference" referenceName="flight"/>
           </inputParameterUsages_EntryLevelSystemCall>
         </actions_ScenarioBehaviour>
-        
-      </scenarioBehaviour_UsageScenario>
-    </usageScenario_UsageModel>
-    <usageScenario_UsageModel id="_EkqVUPViEeuMKba1Qn68bg" entityName="FlightPlanner">
-      <scenarioBehaviour_UsageScenario id="_GmS14PViEeuMKba1Qn68bg" entityName="ScenarioBehaviour">
-        <actions_ScenarioBehaviour xsi:type="usagemodel:Start" id="_GmS14fViEeuMKba1Qn68bg" successor="_GmS14vViEeuMKba1Qn68bg"/>
-        <actions_ScenarioBehaviour xsi:type="usagemodel:Stop" id="_GmS14vViEeuMKba1Qn68bg" predecessor="_GmS14fViEeuMKba1Qn68bg"/>
-        
       </scenarioBehaviour_UsageScenario>
     </usageScenario_UsageModel>
   </usagemodel:UsageModel>
   <emfprofileapplication:ProfileApplication>
-    <stereotypeApplications xsi:type="org.palladiosimulator.dataflow.confidentiality.pcm.model.profile:Characterisable" appliedTo="_EkqVUPViEeuMKba1Qn68bg">
+    <stereotypeApplications xsi:type="org.palladiosimulator.dataflow.confidentiality.pcm.model.profile:Characterisable">
       <extension href="../../plugin/org.palladiosimulator.dataflow.confidentiality.pcm.model.profile/profile.emfprofile_diagram#_yqyHQBBzEeucCo3FRAS_1w"/>
-      <characteristics xsi:type="characteristics:EnumCharacteristic" href="travelPlanner.usagemodel.characteristics#_n2g68PXGEeut8bxiE9EShA"/>
     </stereotypeApplications>
     <stereotypeApplications xsi:type="org.palladiosimulator.dataflow.confidentiality.pcm.model.profile:Characterisable" appliedTo="_V_RAcPVhEeuMKba1Qn68bg">
       <extension href="../../plugin/org.palladiosimulator.dataflow.confidentiality.pcm.model.profile/profile.emfprofile_diagram#_yqyHQBBzEeucCo3FRAS_1w"/>
