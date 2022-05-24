@@ -62,13 +62,81 @@ public class RunCustomJavaBasedAnalysisJob extends AbstractBlackboardInteracting
 		getBlackboard().put(allCharacteristicsResultKey, allCharacteristics);
 		monitor.worked(1);
 
-		var detectedViolations = findViolations(dataDictionaries, allCharacteristics);
+		var detectedViolations = findViolationsTravelPlanner(dataDictionaries, allCharacteristics);
 		getBlackboard().put(violationResultKey, detectedViolations);
 		monitor.worked(1);
 		monitor.done();
 	}
 
-	private ActionBasedQueryResult findViolations(List<PCMDataDictionary> dataDictionaries,
+	private ActionBasedQueryResult findViolationsTravelPlanner(List<PCMDataDictionary> dataDictionaries,
+			ActionBasedQueryResult allCharacteristics) throws JobFailedException {
+		var enumCharacteristicTypes = getAllEnumCharacteristicTypes(dataDictionaries);
+		System.out.println("\n\nCHARACTERISTIC TYPES --------------------");
+		enumCharacteristicTypes.forEach(entry -> System.out.println(entry.getName()));
+
+		var ctGrantedRoles = findByName(enumCharacteristicTypes, "GrantedRoles");
+		var ctAssignedRoles = findByName(enumCharacteristicTypes, "AssignedRoles");
+
+		var violations = new ActionBasedQueryResult();
+
+		System.out.println("\n\nELEMENTS AND CHARACTERISTICS --------------------");
+
+		for (var resultEntry : allCharacteristics.getResults().entrySet()) {
+			for (var queryResult : resultEntry.getValue()) {
+
+				var availableVariables = queryResult.getDataCharacteristics().keySet();
+
+				for (String variable : availableVariables) {
+					var grantedRoles = queryResult.getDataCharacteristics().get(variable).stream()
+							.filter(cv -> cv.getCharacteristicType() == ctGrantedRoles)
+							.map(CharacteristicValue::getCharacteristicLiteral).map(it -> it.getName())
+							.collect(Collectors.toList());
+
+					var assignedRoles = queryResult.getNodeCharacteristics().stream()
+							.filter(cv -> cv.getCharacteristicType() == ctAssignedRoles)
+							.map(val -> val.getCharacteristicLiteral()).map(it -> it.getName())
+							.collect(Collectors.toList());
+
+					var element = getElementRepresentation(queryResult.getElement());
+
+					System.out.println(element + ", " + variable + ", " + grantedRoles.toString() + ", "
+							+ assignedRoles.toString());
+
+//					// Actual constraint
+//					if (serverLocations.contains("nonEU") && dataSensitivites.contains("Personal")) {
+//						violations.addResult(resultEntry.getKey(), queryResult);
+//					}
+				}
+			}
+		}
+
+		System.out.println("\n\nVIOLATIONS --------------------");
+		violations.getResults().forEach((sequence, resultDTO) -> {
+			resultDTO.forEach(it -> System.out.println(getElementRepresentation(it.getElement())));
+
+			System.out.println("-- with sequence --");
+
+			// Find path from newest entry level system call (might not be enough though)
+			var pruneSequence = sequence.stream().takeWhile(
+					it -> !resultDTO.stream().map(e -> e.getElement()).collect(Collectors.toList()).contains(it))
+					.collect(Collectors.toList());
+
+			var sysCalls = pruneSequence.stream()
+					.filter(e -> ((Entity) e.getElement()).eClass().getName().equals("EntryLevelSystemCall"))
+					.collect(Collectors.toList());
+			var lastEntryLevelSystemCall = sysCalls.stream().skip(sysCalls.stream().count() - 1).findFirst().get();
+
+			var finalSequence = pruneSequence.stream().dropWhile(it -> !it.equals(lastEntryLevelSystemCall));
+
+			finalSequence.forEach(it -> System.out.println(getElementRepresentation(it)));
+
+			System.out.println("\n\n");
+		});
+
+		return violations;
+	}
+
+	private ActionBasedQueryResult findViolationsOnlineShop(List<PCMDataDictionary> dataDictionaries,
 			ActionBasedQueryResult allCharacteristics) throws JobFailedException {
 		var enumCharacteristicTypes = getAllEnumCharacteristicTypes(dataDictionaries);
 		System.out.println("\n\nCHARACTERISTIC TYPES --------------------");
@@ -113,16 +181,18 @@ public class RunCustomJavaBasedAnalysisJob extends AbstractBlackboardInteracting
 
 			// Find path from newest entry level system call (might not be enough though)
 			var pruneSequence = sequence.stream().takeWhile(
-					it -> !resultDTO.stream().map(e -> e.getElement()).collect(Collectors.toList()).contains(it)).collect(Collectors.toList());
+					it -> !resultDTO.stream().map(e -> e.getElement()).collect(Collectors.toList()).contains(it))
+					.collect(Collectors.toList());
 
 			var sysCalls = pruneSequence.stream()
-					.filter(e -> ((Entity) e.getElement()).eClass().getName().equals("EntryLevelSystemCall")).collect(Collectors.toList());
+					.filter(e -> ((Entity) e.getElement()).eClass().getName().equals("EntryLevelSystemCall"))
+					.collect(Collectors.toList());
 			var lastEntryLevelSystemCall = sysCalls.stream().skip(sysCalls.stream().count() - 1).findFirst().get();
 
 			var finalSequence = pruneSequence.stream().dropWhile(it -> !it.equals(lastEntryLevelSystemCall));
 
 			finalSequence.forEach(it -> System.out.println(getElementRepresentation(it)));
-			
+
 			System.out.println("\n\n");
 		});
 

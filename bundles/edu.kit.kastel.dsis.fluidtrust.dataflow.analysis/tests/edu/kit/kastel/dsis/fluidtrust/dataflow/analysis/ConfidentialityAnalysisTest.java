@@ -24,11 +24,21 @@ public class ConfidentialityAnalysisTest extends TestBase {
 	}
 	
 	@Test
-	public void test() throws JobFailedException, UserCanceledException {
+	public void testOnlineShop() throws JobFailedException, UserCanceledException {
 		System.out.println("Hello World!");
 		
 		final var allocationURI = TestInitializer.getModelURI("models/InternationalOnlineShop/default.allocation");
 		final var usageURI = TestInitializer.getModelURI("models/InternationalOnlineShop/default.usagemodel");
+		final var workflow = new DataflowAnalysisWorkflow(allocationURI, usageURI);
+		workflow.execute(new NullProgressMonitor());
+	}
+	
+	@Test
+	public void testTravelPlanner() throws JobFailedException, UserCanceledException {
+		System.out.println("Hello Travel Planner!");
+		
+		final var allocationURI = TestInitializer.getModelURI("models/TravelPlanner/travelPlanner.allocation");
+		final var usageURI = TestInitializer.getModelURI("models/TravelPlanner/travelPlanner.usagemodel");
 		final var workflow = new DataflowAnalysisWorkflow(allocationURI, usageURI);
 		workflow.execute(new NullProgressMonitor());
 	}
