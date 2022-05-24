@@ -75,9 +75,9 @@
     <providedRoles_InterfaceProvidingEntity xsi:type="repository:OperationProvidedRole" id="_1jwCQPVeEeuMKba1Qn68bg" entityName="AirlineLogic.provided.FlightQuery" providedInterface__OperationProvidedRole="_VE604PVdEeuMKba1Qn68bg"/>
     <requiredRoles_InterfaceRequiringEntity xsi:type="repository:OperationRequiredRole" id="_6D-sMPVeEeuMKba1Qn68bg" entityName="AirlineLogic.required.FlightDB" requiredInterface__OperationRequiredRole="_XlcQ4PVdEeuMKba1Qn68bg"/>
     <serviceEffectSpecifications__BasicComponent xsi:type="seff:ResourceDemandingSEFF" id="_vorK8PVeEeuMKba1Qn68bg" describedService__SEFF="_i4_owPVdEeuMKba1Qn68bg">
-      <steps_Behaviour xsi:type="seff:StartAction" id="_vorK8fVeEeuMKba1Qn68bg" successor_AbstractAction="_7HCu4PViEeuMKba1Qn68bg"/>
+      <steps_Behaviour xsi:type="seff:StartAction" id="_vorK8fVeEeuMKba1Qn68bg" successor_AbstractAction="_GjyygNtDEey9Ub_sDwUktA"/>
       <steps_Behaviour xsi:type="seff:StopAction" id="_vorK8vVeEeuMKba1Qn68bg" predecessor_AbstractAction="_7HCu4PViEeuMKba1Qn68bg"/>
-      <steps_Behaviour xsi:type="seff:SetVariableAction" id="_7HCu4PViEeuMKba1Qn68bg" entityName="return confirmation" predecessor_AbstractAction="_vorK8fVeEeuMKba1Qn68bg" successor_AbstractAction="_vorK8vVeEeuMKba1Qn68bg">
+      <steps_Behaviour xsi:type="seff:SetVariableAction" id="_7HCu4PViEeuMKba1Qn68bg" entityName="return confirmation" predecessor_AbstractAction="_GjyygNtDEey9Ub_sDwUktA" successor_AbstractAction="_vorK8vVeEeuMKba1Qn68bg">
         <localVariableUsages_SetVariableAction>
           <variableCharacterisation_VariableUsage xsi:type="confidentiality:ConfidentialityVariableCharacterisation">
             <specification_VariableCharacterisation specification="false"/>
@@ -87,6 +87,18 @@
             <rhs xsi:type="expressions:True" id="_xzLmUfXwEeut8bxiE9EShA"/>
           </variableCharacterisation_VariableUsage>
           <namedReference__VariableUsage xsi:type="stoex:VariableReference" referenceName="RETURN"/>
+        </localVariableUsages_SetVariableAction>
+      </steps_Behaviour>
+      <steps_Behaviour xsi:type="seff:SetVariableAction" id="_GjyygNtDEey9Ub_sDwUktA" entityName="do something with ccd" predecessor_AbstractAction="_vorK8fVeEeuMKba1Qn68bg" successor_AbstractAction="_7HCu4PViEeuMKba1Qn68bg">
+        <localVariableUsages_SetVariableAction>
+          <variableCharacterisation_VariableUsage xsi:type="confidentiality:ConfidentialityVariableCharacterisation">
+            <specification_VariableCharacterisation specification="false"/>
+            <lhs xsi:type="expression:LhsEnumCharacteristicReference" id="_L1ri4NtDEey9Ub_sDwUktA"/>
+            <rhs xsi:type="expression:NamedEnumCharacteristicReference" id="_L1ri4dtDEey9Ub_sDwUktA">
+              <namedReference xsi:type="stoex:VariableReference" referenceName="ccd"/>
+            </rhs>
+          </variableCharacterisation_VariableUsage>
+          <namedReference__VariableUsage xsi:type="stoex:VariableReference" referenceName="ccd"/>
         </localVariableUsages_SetVariableAction>
       </steps_Behaviour>
     </serviceEffectSpecifications__BasicComponent>

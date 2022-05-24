@@ -62,6 +62,7 @@ public class RunCustomJavaBasedAnalysisJob extends AbstractBlackboardInteracting
 		getBlackboard().put(allCharacteristicsResultKey, allCharacteristics);
 		monitor.worked(1);
 
+		// Hard coded, change the following line's findViolation call to test
 		var detectedViolations = findViolationsTravelPlanner(dataDictionaries, allCharacteristics);
 		getBlackboard().put(violationResultKey, detectedViolations);
 		monitor.worked(1);
@@ -102,10 +103,10 @@ public class RunCustomJavaBasedAnalysisJob extends AbstractBlackboardInteracting
 					System.out.println(element + ", " + variable + ", " + grantedRoles.toString() + ", "
 							+ assignedRoles.toString());
 
-//					// Actual constraint
-//					if (serverLocations.contains("nonEU") && dataSensitivites.contains("Personal")) {
-//						violations.addResult(resultEntry.getKey(), queryResult);
-//					}
+					// Actual constraint
+					if(!grantedRoles.stream().anyMatch(it -> assignedRoles.contains(it))) {
+						violations.addResult(resultEntry.getKey(), queryResult);
+					}
 				}
 			}
 		}
