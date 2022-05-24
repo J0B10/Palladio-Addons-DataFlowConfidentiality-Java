@@ -85,21 +85,29 @@ public class RunCustomJavaBasedAnalysisJob extends AbstractBlackboardInteracting
 
 		for (var resultEntry : allCharacteristics.getResults().entrySet()) {
 			for (var queryResult : resultEntry.getValue()) {
+				
+				var availableVariables = queryResult.getDataCharacteristics().keySet();
+				
+				for (String variable : availableVariables) {
+					var grantedRoles = queryResult.getDataCharacteristics()
+							.get(variable)
+							.stream()
+							.filter(cv -> cv.getCharacteristicType() == ctGrantedRoles)
+							.map(CharacteristicValue::getCharacteristicLiteral).map(it -> it.getName())
+							.collect(Collectors.toList());
+					
+					var assignedRoles = queryResult.getNodeCharacteristics()
+							.stream()
+							.filter(cv -> cv.getCharacteristicType() == ctAssignedRoles)
+							.map(val -> val.getCharacteristicLiteral()).map(it -> it.getName())
+							.collect(Collectors.toList());
 
-				var grantedRoles = queryResult.getDataCharacteristics().values().stream()
-						.flatMap(Collection::stream)
-						.filter(cv -> cv.getCharacteristicType() == ctGrantedRoles)
-						.map(CharacteristicValue::getCharacteristicLiteral).map(it -> it.getName())
-						.collect(Collectors.toList());
+					var element = getElementRepresentation(queryResult.getElement());
 
-				var assignedRoles = queryResult.getDataCharacteristics().values().stream()
-						.flatMap(Collection::stream).filter(cv -> cv.getCharacteristicType() == ctAssignedRoles)
-						.map(val -> val.getCharacteristicLiteral()).map(it -> it.getName())
-						.collect(Collectors.toList());
+					System.out.println(element + ", " + variable + ", " + grantedRoles.toString() + ", " + assignedRoles.toString());
+				}
 
-				var element = getElementRepresentation(queryResult.getElement());
-
-				System.out.println(element + ", " + grantedRoles.toString() + ", " + assignedRoles.toString());
+				
 
 				// Actual constraint
 				/*if (serverLocations.contains("nonEU") && dataSensitivites.contains("Personal")) {
