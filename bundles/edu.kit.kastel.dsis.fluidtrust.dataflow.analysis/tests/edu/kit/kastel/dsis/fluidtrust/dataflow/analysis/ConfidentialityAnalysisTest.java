@@ -25,7 +25,8 @@ public class ConfidentialityAnalysisTest extends TestBase {
 	}
 	
 	@Test
-	public void test() throws JobFailedException, UserCanceledException {
+	@Disabled
+	public void testOnlineShop() throws JobFailedException, UserCanceledException {
 		System.out.println("Hello World!");
 		
 		final var allocationURI = TestInitializer.getModelURI("models/InternationalOnlineShop/default.allocation");
@@ -36,6 +37,7 @@ public class ConfidentialityAnalysisTest extends TestBase {
 
 	
 	@Test
+	@Disabled
 	public void testShop2() throws JobFailedException, UserCanceledException {
 		System.out.println("Hello World!");
 		final var allocationURI = TestInitializer.getModelURI("models/InternationalOnlineShop_paladio/default.allocation");
