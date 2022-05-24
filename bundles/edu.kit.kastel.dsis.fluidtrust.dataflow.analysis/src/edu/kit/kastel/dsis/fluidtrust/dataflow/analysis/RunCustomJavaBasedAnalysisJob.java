@@ -143,10 +143,8 @@ public class RunCustomJavaBasedAnalysisJob extends AbstractBlackboardInteracting
 		System.out.println("\n\nCHARACTERISTIC TYPES --------------------");
 		enumCharacteristicTypes.forEach(entry -> System.out.println(entry.getName()));
 
-		//var ctServerLocation = findByName(enumCharacteristicTypes, "ServerLocation");
-		//var ctDataSensitivity = findByName(enumCharacteristicTypes, "DataSensitivity")
-		var ctGrantedRoles = findByName(enumCharacteristicTypes, "GrantedRoles");
-		var ctAssignedRoles = findByName(enumCharacteristicTypes, "AssignedRoles");
+		var ctServerLocation = findByName(enumCharacteristicTypes, "ServerLocation");
+		var ctDataSensitivity = findByName(enumCharacteristicTypes, "DataSensitivity");
 
 		var violations = new ActionBasedQueryResult();
 
@@ -154,32 +152,23 @@ public class RunCustomJavaBasedAnalysisJob extends AbstractBlackboardInteracting
 
 		for (var resultEntry : allCharacteristics.getResults().entrySet()) {
 			for (var queryResult : resultEntry.getValue()) {
-				
-				var availableVariables = queryResult.getDataCharacteristics().keySet();
-				
-				for (String variable : availableVariables) {
-					var grantedRoles = queryResult.getDataCharacteristics()
-							.get(variable)
-							.stream()
-							.filter(cv -> cv.getCharacteristicType() == ctGrantedRoles)
-							.map(CharacteristicValue::getCharacteristicLiteral).map(it -> it.getName())
-							.collect(Collectors.toList());
-					
-					var assignedRoles = queryResult.getNodeCharacteristics()
-							.stream()
-							.filter(cv -> cv.getCharacteristicType() == ctAssignedRoles)
-							.map(val -> val.getCharacteristicLiteral()).map(it -> it.getName())
-							.collect(Collectors.toList());
 
-					var element = getElementRepresentation(queryResult.getElement());
+				var serverLocations = queryResult.getNodeCharacteristics().stream()
+						.filter(cv -> cv.getCharacteristicType() == ctServerLocation)
+						.map(CharacteristicValue::getCharacteristicLiteral).map(it -> it.getName())
+						.collect(Collectors.toList());
 
-					System.out.println(element + ", " + variable + ", " + grantedRoles.toString() + ", " + assignedRoles.toString());
-				}
+				var dataSensitivites = queryResult.getDataCharacteristics().values().stream()
+						.flatMap(Collection::stream).filter(cv -> cv.getCharacteristicType() == ctDataSensitivity)
+						.map(CharacteristicValue::getCharacteristicLiteral).map(it -> it.getName())
+						.collect(Collectors.toList());
 
-				
+				var element = getElementRepresentation(queryResult.getElement());
+
+				System.out.println(element + ", " + serverLocations.toString() + ", " + dataSensitivites.toString());
 
 				// Actual constraint
-				if (!grantedRoles.equals(assignedRoles)) {
+				if (serverLocations.contains("nonEU") && dataSensitivites.contains("Personal")) {
 					violations.addResult(resultEntry.getKey(), queryResult);
 				}
 			}
@@ -207,9 +196,6 @@ public class RunCustomJavaBasedAnalysisJob extends AbstractBlackboardInteracting
 
 			System.out.println("\n\n");
 		});
-		if (violations.getResults().isEmpty()) {
-			System.out.println(" none \n");
-		}
 
 		return violations;
 	}
