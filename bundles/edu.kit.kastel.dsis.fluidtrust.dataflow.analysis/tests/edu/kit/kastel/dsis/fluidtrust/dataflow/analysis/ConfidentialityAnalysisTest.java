@@ -25,6 +25,7 @@ public class ConfidentialityAnalysisTest extends TestBase {
 	}
 	
 	@Test
+	@Disabled
 	public void testOnlineShop() throws JobFailedException, UserCanceledException {
 		System.out.println("Hello World!");
 		
@@ -33,19 +34,10 @@ public class ConfidentialityAnalysisTest extends TestBase {
 		final var workflow = new DataflowAnalysisWorkflow(allocationURI, usageURI);
 		workflow.execute(new NullProgressMonitor());
 	}
-	
-	@Test
-	public void testTravelPlanner() throws JobFailedException, UserCanceledException {
-		System.out.println("Hello Travel Planner!");
-		
-		final var allocationURI = TestInitializer.getModelURI("models/TravelPlanner/travelPlanner.allocation");
-		final var usageURI = TestInitializer.getModelURI("models/TravelPlanner/travelPlanner.usagemodel");
-		final var workflow = new DataflowAnalysisWorkflow(allocationURI, usageURI);
-		workflow.execute(new NullProgressMonitor());
-	}
 
 	
 	@Test
+	@Disabled
 	public void testShop2() throws JobFailedException, UserCanceledException {
 		System.out.println("Hello World!");
 		final var allocationURI = TestInitializer.getModelURI("models/InternationalOnlineShop_paladio/default.allocation");

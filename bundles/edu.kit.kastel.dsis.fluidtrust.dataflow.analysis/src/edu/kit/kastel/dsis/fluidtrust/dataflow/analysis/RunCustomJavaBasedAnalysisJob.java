@@ -171,9 +171,9 @@ public class RunCustomJavaBasedAnalysisJob extends AbstractBlackboardInteracting
 				System.out.println(element + ", " + grantedRoles.toString() + ", " + assignedRoles.toString());
 
 				// Actual constraint
-				/*if (serverLocations.contains("nonEU") && dataSensitivites.contains("Personal")) {
+				if (!grantedRoles.equals(assignedRoles)) {
 					violations.addResult(resultEntry.getKey(), queryResult);
-				}*/
+				}
 			}
 		}
 
@@ -199,6 +199,9 @@ public class RunCustomJavaBasedAnalysisJob extends AbstractBlackboardInteracting
 
 			System.out.println("\n\n");
 		});
+		if (violations.getResults().isEmpty()) {
+			System.out.println(" none \n");
+		}
 
 		return violations;
 	}
