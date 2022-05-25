@@ -25,31 +25,34 @@ public class ConfidentialityAnalysisTest extends TestBase {
 	
 	@Test
 	public void testOnlineShop() throws JobFailedException, UserCanceledException {
-		System.out.println("Hello World!");
+		System.out.println("\n------------------------------------------------------------------------------------");
+		System.out.println("Running Online Shop Analysis:\n");
 		
 		final var allocationURI = TestInitializer.getModelURI("models/InternationalOnlineShop/default.allocation");
 		final var usageURI = TestInitializer.getModelURI("models/InternationalOnlineShop/default.usagemodel");
-		final var workflow = new DataflowAnalysisWorkflow(allocationURI, usageURI);
+		final var workflow = new DataflowAnalysisWorkflow(allocationURI, usageURI, new RunOnlineShopAnalysisJob());
 		workflow.execute(new NullProgressMonitor());
 	}
 	
 	@Test
 	public void testBranchingOnlineShop() throws JobFailedException, UserCanceledException {
-		System.out.println("Hello World!");
+		System.out.println("\n------------------------------------------------------------------------------------");
+		System.out.println("Running Branching Online Shop Analysis:\n");
 		
 		final var allocationURI = TestInitializer.getModelURI("models/BranchingOnlineShop/default.allocation");
 		final var usageURI = TestInitializer.getModelURI("models/BranchingOnlineShop/default.usagemodel");
-		final var workflow = new DataflowAnalysisWorkflow(allocationURI, usageURI);
+		final var workflow = new DataflowAnalysisWorkflow(allocationURI, usageURI, new RunOnlineShopAnalysisJob());
 		workflow.execute(new NullProgressMonitor());
 	}
 	
 	@Test
 	public void testTravelPlanner() throws JobFailedException, UserCanceledException {
-		System.out.println("Hello Travel Planner!");
+		System.out.println("\n------------------------------------------------------------------------------------");
+		System.out.println("Running Travel Planner Analysis:\n");
 		
 		final var allocationURI = TestInitializer.getModelURI("models/TravelPlanner/travelPlanner.allocation");
 		final var usageURI = TestInitializer.getModelURI("models/TravelPlanner/travelPlanner.usagemodel");
-		final var workflow = new DataflowAnalysisWorkflow(allocationURI, usageURI);
+		final var workflow = new DataflowAnalysisWorkflow(allocationURI, usageURI, new RunTravelPlannerAnalysisJob());
 		workflow.execute(new NullProgressMonitor());
 	}
 
