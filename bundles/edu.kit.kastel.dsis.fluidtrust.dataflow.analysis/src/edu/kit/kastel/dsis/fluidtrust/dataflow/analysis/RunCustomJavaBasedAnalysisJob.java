@@ -1,5 +1,7 @@
 package edu.kit.kastel.dsis.fluidtrust.dataflow.analysis;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -29,23 +31,28 @@ import edu.kit.kastel.dsis.fluidtrust.casestudy.pcs.analysis.dto.ActionSequenceE
 import edu.kit.kastel.dsis.fluidtrust.casestudy.pcs.analysis.dto.CallingActionSequenceElement;
 import edu.kit.kastel.dsis.fluidtrust.casestudy.pcs.analysis.dto.CharacteristicValue;
 
-public class RunCustomJavaBasedAnalysisJob extends AbstractBlackboardInteractingJob<KeyValueMDSDBlackboard> {
+public abstract class RunCustomJavaBasedAnalysisJob extends AbstractBlackboardInteractingJob<KeyValueMDSDBlackboard> {
 
-	private final ModelLocation usageModelLocation;
-	private final ModelLocation allocationModelLocation;
-	private final String allCharacteristicsResultKey;
-	private final String violationResultKey;
-
-	public RunCustomJavaBasedAnalysisJob(ModelLocation usageModelLocation, ModelLocation allocationModelLocation,
+	private ModelLocation usageModelLocation;
+	private ModelLocation allocationModelLocation;
+	private String allCharacteristicsResultKey;
+	private String violationResultKey;
+	
+	public RunCustomJavaBasedAnalysisJob prepareJob(ModelLocation usageModelLocation, ModelLocation allocationModelLocation,
 			String allCharacteristicsResultKey, String violationResultKey) {
 		this.usageModelLocation = usageModelLocation;
 		this.allocationModelLocation = allocationModelLocation;
 		this.allCharacteristicsResultKey = allCharacteristicsResultKey;
 		this.violationResultKey = violationResultKey;
+		return this;
 	}
 
 	@Override
 	public void execute(IProgressMonitor monitor) throws JobFailedException, UserCanceledException {
+		if (usageModelLocation == null || allocationModelLocation == null || allCharacteristicsResultKey == null || violationResultKey == null) {
+			throw new IllegalStateException("prepare job before executing it");
+		}
+		
 		var usageModel = (UsageModel) getBlackboard().getContents(usageModelLocation).get(0);
 		var allocationModel = (Allocation) getBlackboard().getContents(allocationModelLocation).get(0);
 		var modelPartition = getBlackboard().getPartition(usageModelLocation.getPartitionID());
@@ -62,151 +69,22 @@ public class RunCustomJavaBasedAnalysisJob extends AbstractBlackboardInteracting
 		getBlackboard().put(allCharacteristicsResultKey, allCharacteristics);
 		monitor.worked(1);
 
-		// Hard coded, change the following line's findViolation call to test
-		var detectedViolations = findViolationsOnlineShop(dataDictionaries, allCharacteristics);
+		var detectedViolations = findViolations(dataDictionaries, allCharacteristics);
 		getBlackboard().put(violationResultKey, detectedViolations);
 		monitor.worked(1);
 		monitor.done();
 	}
+	
+	protected abstract ActionBasedQueryResult findViolations(List<PCMDataDictionary> dataDictionaries,
+			ActionBasedQueryResult allCharacteristics) throws JobFailedException;
 
-	private ActionBasedQueryResult findViolationsTravelPlanner(List<PCMDataDictionary> dataDictionaries,
-			ActionBasedQueryResult allCharacteristics) throws JobFailedException {
-		var enumCharacteristicTypes = getAllEnumCharacteristicTypes(dataDictionaries);
-		System.out.println("\n\nCHARACTERISTIC TYPES --------------------");
-		enumCharacteristicTypes.forEach(entry -> System.out.println(entry.getName()));
-
-		var ctGrantedRoles = findByName(enumCharacteristicTypes, "GrantedRoles");
-		var ctAssignedRoles = findByName(enumCharacteristicTypes, "AssignedRoles");
-
-		var violations = new ActionBasedQueryResult();
-
-		System.out.println("\n\nELEMENTS AND CHARACTERISTICS --------------------");
-
-		for (var resultEntry : allCharacteristics.getResults().entrySet()) {
-			for (var queryResult : resultEntry.getValue()) {
-
-				var availableVariables = queryResult.getDataCharacteristics().keySet();
-
-				for (String variable : availableVariables) {
-					var grantedRoles = queryResult.getDataCharacteristics().get(variable).stream()
-							.filter(cv -> cv.getCharacteristicType() == ctGrantedRoles)
-							.map(CharacteristicValue::getCharacteristicLiteral).map(it -> it.getName())
-							.collect(Collectors.toList());
-
-					var assignedRoles = queryResult.getNodeCharacteristics().stream()
-							.filter(cv -> cv.getCharacteristicType() == ctAssignedRoles)
-							.map(val -> val.getCharacteristicLiteral()).map(it -> it.getName())
-							.collect(Collectors.toList());
-
-					var element = getElementRepresentation(queryResult.getElement());
-
-					System.out.println(element + ", " + variable + ", " + grantedRoles.toString() + ", "
-							+ assignedRoles.toString());
-
-					// Actual constraint
-					if(!grantedRoles.stream().anyMatch(it -> assignedRoles.contains(it))) {
-						violations.addResult(resultEntry.getKey(), queryResult);
-					}
-				}
-			}
-		}
-
-		System.out.println("\n\nVIOLATIONS --------------------");
-		violations.getResults().forEach((sequence, resultDTO) -> {
-			resultDTO.forEach(it -> System.out.println(getElementRepresentation(it.getElement())));
-
-			System.out.println("-- with sequence --");
-
-			// Find path from newest entry level system call (might not be enough though)
-			var pruneSequence = sequence.stream().takeWhile(
-					it -> !resultDTO.stream().map(e -> e.getElement()).collect(Collectors.toList()).contains(it))
-					.collect(Collectors.toList());
-
-			var sysCalls = pruneSequence.stream()
-					.filter(e -> ((Entity) e.getElement()).eClass().getName().equals("EntryLevelSystemCall"))
-					.collect(Collectors.toList());
-			var lastEntryLevelSystemCall = sysCalls.stream().skip(sysCalls.stream().count() - 1).findFirst().get();
-
-			var finalSequence = pruneSequence.stream().dropWhile(it -> !it.equals(lastEntryLevelSystemCall));
-
-			finalSequence.forEach(it -> System.out.println(getElementRepresentation(it)));
-
-			System.out.println("\n\n");
-		});
-
-		return violations;
-	}
-
-	private ActionBasedQueryResult findViolationsOnlineShop(List<PCMDataDictionary> dataDictionaries,
-			ActionBasedQueryResult allCharacteristics) throws JobFailedException {
-		var enumCharacteristicTypes = getAllEnumCharacteristicTypes(dataDictionaries);
-		System.out.println("\n\nCHARACTERISTIC TYPES --------------------");
-		enumCharacteristicTypes.forEach(entry -> System.out.println(entry.getName()));
-
-		var ctServerLocation = findByName(enumCharacteristicTypes, "ServerLocation");
-		var ctDataSensitivity = findByName(enumCharacteristicTypes, "DataSensitivity");
-
-		var violations = new ActionBasedQueryResult();
-
-		System.out.println("\n\nELEMENTS AND CHARACTERISTICS --------------------");
-
-		for (var resultEntry : allCharacteristics.getResults().entrySet()) {
-			for (var queryResult : resultEntry.getValue()) {
-
-				var serverLocations = queryResult.getNodeCharacteristics().stream()
-						.filter(cv -> cv.getCharacteristicType() == ctServerLocation)
-						.map(CharacteristicValue::getCharacteristicLiteral).map(it -> it.getName())
-						.collect(Collectors.toList());
-
-				var dataSensitivites = queryResult.getDataCharacteristics().values().stream()
-						.flatMap(Collection::stream).filter(cv -> cv.getCharacteristicType() == ctDataSensitivity)
-						.map(CharacteristicValue::getCharacteristicLiteral).map(it -> it.getName())
-						.collect(Collectors.toList());
-
-				var element = getElementRepresentation(queryResult.getElement());
-
-				System.out.println(element + ", " + serverLocations.toString() + ", " + dataSensitivites.toString());
-
-				// Actual constraint
-				if (serverLocations.contains("nonEU") && dataSensitivites.contains("Personal")) {
-					violations.addResult(resultEntry.getKey(), queryResult);
-				}
-			}
-		}
-
-		System.out.println("\n\nVIOLATIONS --------------------");
-		violations.getResults().forEach((sequence, resultDTO) -> {
-			resultDTO.forEach(it -> System.out.println(getElementRepresentation(it.getElement())));
-
-			System.out.println("-- with sequence --");
-
-			// Find path from newest entry level system call (might not be enough though)
-			var pruneSequence = sequence.stream().takeWhile(
-					it -> !resultDTO.stream().map(e -> e.getElement()).collect(Collectors.toList()).contains(it))
-					.collect(Collectors.toList());
-
-			var sysCalls = pruneSequence.stream()
-					.filter(e -> ((Entity) e.getElement()).eClass().getName().equals("EntryLevelSystemCall"))
-					.collect(Collectors.toList());
-			var lastEntryLevelSystemCall = sysCalls.stream().skip(sysCalls.stream().count() - 1).findFirst().get();
-
-			var finalSequence = pruneSequence.stream().dropWhile(it -> !it.equals(lastEntryLevelSystemCall));
-
-			finalSequence.forEach(it -> System.out.println(getElementRepresentation(it)));
-
-			System.out.println("\n\n");
-		});
-
-		return violations;
-	}
-
-	private EnumCharacteristicType findByName(Collection<EnumCharacteristicType> enumCharacteristicTypes, String name)
+	protected EnumCharacteristicType findByName(Collection<EnumCharacteristicType> enumCharacteristicTypes, String name)
 			throws JobFailedException {
 		return enumCharacteristicTypes.stream().filter(ct -> ct.getName().equals(name)).findFirst()
 				.orElseThrow(() -> new JobFailedException("Could not find " + name + " characteristic type."));
 	}
 
-	private ActionBasedQueryResult findAllCharacteristics(CharacteristicsQueryEngine queryEngine,
+	protected ActionBasedQueryResult findAllCharacteristics(CharacteristicsQueryEngine queryEngine,
 			Collection<PCMDataDictionary> dataDictionaries) {
 		var allCharacteristicValues = getAllEnumCharacteristicTypes(dataDictionaries).stream()
 				.flatMap(c -> c.getType().getLiterals().stream().map(l -> new CharacteristicValue(c, l)))
@@ -216,14 +94,14 @@ public class RunCustomJavaBasedAnalysisJob extends AbstractBlackboardInteracting
 		return queryEngine.query(query);
 	}
 
-	private Collection<EnumCharacteristicType> getAllEnumCharacteristicTypes(
+	protected Collection<EnumCharacteristicType> getAllEnumCharacteristicTypes(
 			Collection<PCMDataDictionary> dataDictionaries) {
 		return dataDictionaries.stream().map(PCMDataDictionary::getCharacteristicTypes).flatMap(Collection::stream)
 				.filter(EnumCharacteristicType.class::isInstance).map(EnumCharacteristicType.class::cast)
 				.collect(Collectors.toList());
 	}
 
-	private CharacteristicsQueryEngine createQueryEngine(UsageModel usageModel, Allocation allocationModel) {
+	protected CharacteristicsQueryEngine createQueryEngine(UsageModel usageModel, Allocation allocationModel) {
 		var actionSequenceFinder = new ActionSequenceFinderImpl();
 		var actionSequences = actionSequenceFinder.findActionSequencesForUsageModel(usageModel);
 		var characteristicsCalculator = new CharacteristicsCalculator(allocationModel);
@@ -236,7 +114,7 @@ public class RunCustomJavaBasedAnalysisJob extends AbstractBlackboardInteracting
 		// nothing to do here
 	}
 
-	private String getElementRepresentation(ActionSequenceElement<?> element) {
+	protected String getElementRepresentation(ActionSequenceElement<?> element) {
 		Entity modelElement = (Entity) element.getElement();
 		String modelElementTypeName = modelElement.eClass().getName();
 		if (element instanceof CallingActionSequenceElement<?>) {

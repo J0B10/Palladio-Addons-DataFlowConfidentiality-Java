@@ -18,13 +18,15 @@ public class DataflowAnalysisJob extends AbstractBlackboardInteractingJob<KeyVal
 
 	private final URI allocationURI;
 	private final URI usageURI;
+	private final RunCustomJavaBasedAnalysisJob runAnalysisJob;
 	protected static final String PCM_MODEL_PARTITION = "pcmModels";
 	private static final String ALL_CHARACTERISTICS_RESULT_KEY = "resultAllCharacteristicsKey";
 	private static final String VIOLATIONS_RESULT_KEY = "resultViolationsKey";
 
-	public DataflowAnalysisJob(URI allocationURI, URI usageURI) {
+	public DataflowAnalysisJob(URI allocationURI, URI usageURI, RunCustomJavaBasedAnalysisJob runAnalysisJob) {
 		this.usageURI = usageURI;
 		this.allocationURI = allocationURI;
+		this.runAnalysisJob = runAnalysisJob;
 	}
 
 	@Override
@@ -39,7 +41,7 @@ public class DataflowAnalysisJob extends AbstractBlackboardInteractingJob<KeyVal
 				Arrays.asList(usageModelLocation, allocationLocation));
 		job.add(loadUsageModelJob);
 
-		var runAnalysisJob = new RunCustomJavaBasedAnalysisJob(usageModelLocation, allocationLocation,
+		runAnalysisJob.prepareJob(usageModelLocation, allocationLocation,
 				ALL_CHARACTERISTICS_RESULT_KEY, VIOLATIONS_RESULT_KEY);
 		job.add(runAnalysisJob);
 		

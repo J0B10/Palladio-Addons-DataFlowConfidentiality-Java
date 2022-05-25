@@ -20,7 +20,7 @@ import tools.mdsd.library.standalone.initialization.log4j.Log4jInitilizationTask
 
 public class DataflowAnalysisWorkflow extends SequentialBlackboardInteractingJob<KeyValueMDSDBlackboard> {
 
-	public DataflowAnalysisWorkflow(URI allocationURI, URI usageURI) {
+	public DataflowAnalysisWorkflow(URI allocationURI, URI usageURI, RunCustomJavaBasedAnalysisJob runAnalysisJob) {
 
 		// TODO: Stephans Test Initilaizer der Palladio Erweiterung anschauen
 		//IProfileRegistry.eINSTANCE.getClass();
@@ -47,7 +47,7 @@ public class DataflowAnalysisWorkflow extends SequentialBlackboardInteractingJob
 		Logger.getLogger(AbstractCleaningLinker.class).setLevel(Level.WARN);
 
 		// build and run job
-		this.add(new DataflowAnalysisJob(allocationURI, usageURI));
+		this.add(new DataflowAnalysisJob(allocationURI, usageURI, runAnalysisJob));
 	}
 
 }
