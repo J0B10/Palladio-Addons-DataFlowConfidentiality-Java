@@ -63,7 +63,7 @@ public class RunCustomJavaBasedAnalysisJob extends AbstractBlackboardInteracting
 		monitor.worked(1);
 
 		// Hard coded, change the following line's findViolation call to test
-		var detectedViolations = findViolationsTravelPlanner(dataDictionaries, allCharacteristics);
+		var detectedViolations = findViolationsOnlineShop(dataDictionaries, allCharacteristics);
 		getBlackboard().put(violationResultKey, detectedViolations);
 		monitor.worked(1);
 		monitor.done();

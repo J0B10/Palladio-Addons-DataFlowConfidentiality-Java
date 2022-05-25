@@ -34,6 +34,16 @@ public class ConfidentialityAnalysisTest extends TestBase {
 	}
 	
 	@Test
+	public void testBranchingOnlineShop() throws JobFailedException, UserCanceledException {
+		System.out.println("Hello World!");
+		
+		final var allocationURI = TestInitializer.getModelURI("models/BranchingOnlineShop/default.allocation");
+		final var usageURI = TestInitializer.getModelURI("models/BranchingOnlineShop/default.usagemodel");
+		final var workflow = new DataflowAnalysisWorkflow(allocationURI, usageURI);
+		workflow.execute(new NullProgressMonitor());
+	}
+	
+	@Test
 	public void testTravelPlanner() throws JobFailedException, UserCanceledException {
 		System.out.println("Hello Travel Planner!");
 		
